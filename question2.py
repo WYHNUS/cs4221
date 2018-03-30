@@ -1,4 +1,3 @@
-import pyodbc
 
 import os
 from os.path import join, dirname
@@ -14,13 +13,6 @@ db_pwd = os.getenv("db_pwd")
 
 connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server};Server=" + db_server + ";Database=" + db + ";Uid=" + db_id + ";Pwd=" + db_pwd + ";Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;")
 
-create_sql = "CREATE TABLE account(account_number integer PRIMARY KEY, branch_number integer, balance float);"
-
-connection.autocommit = True
-connection.execute(create_sql)
-
-#kind of slow
-cursor = connection.cursor()
 import random
 for i in range(1,100001):
     branch_num = random.randint(1,20)
@@ -33,5 +25,3 @@ count_str = "SELECT COUNT(*) FROM ACCOUNT"
 cursor.execute(count_str)
 print(cursor.fetchall())
 cursor.commit()
-
-connection.close()
