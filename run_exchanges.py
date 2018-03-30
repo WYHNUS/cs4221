@@ -37,7 +37,9 @@ def exchange(connection):
   cursor.execute("UPDATE account set balance = " + str(balance_a1) + " WHERE account_number=" + str(a2))
   cursor.commit()
 
-def thread_exchange(num_exchange):
+def thread_exchange(param):
+  num_exchange = param[0]
+  isolation_level = param[1]
   start_time = time.time()
   connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server};Server=" + db_server + ";Database=" + db + ";Uid=" + db_id + ";Pwd=" + db_pwd + ";Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;")
   isolation_str = "SET TRANSACTION ISOLATION LEVEL " + isolation_level
@@ -49,9 +51,9 @@ def thread_exchange(num_exchange):
   end_time = time.time()
   return end_time - start_time
 
-def run_exchange(num_exchange, num_thread): 
+def run_exchanges(num_exchange, num_thread, isolation_level): 
   pool = Pool(num_thread)
-  param = [num_exchange] * num_thread
+  param = [(num_exchange, isolation_level)] * num_thread
   results = pool.map(thread_exchange, param)
   return results
 
@@ -65,6 +67,6 @@ isolation_level = raw_input(prompt)
 if isolation_level.upper() not in ["READ COMMITTED", "REPEATABLE READ", "SERIALIZABLE"]:
    raise ValueError("Connection closed: invalid isolation level")
 
-result = run_exchange(num_exchange, num_thread)
+result = run_exchanges(num_exchange, num_thread, isolation_level)
 print(result)
 
