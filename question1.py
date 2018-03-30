@@ -24,14 +24,15 @@ cursor = connection.cursor()
 import random
 for i in range(1,100001):
     branch_num = random.randint(1,20)
-    balance = random.random()*100000
+    balance = round(random.random()*100000, 2)
     insertion_str = "INSERT INTO account VALUES(" + str(i) + "," + str(branch_num) + "," + str(random.random()*100000) + ");"
     cursor.execute(insertion_str)
     cursor.commit()
 
 count_str = "SELECT COUNT(*) FROM ACCOUNT"
 cursor.execute(count_str)
-print(cursor.fetchall())
+print(cursor.fetchall()[0][0])
 cursor.commit()
 
 connection.close()
+
