@@ -23,13 +23,11 @@ def sum_isolation(S, I):
     connection = pyodbc.connect("Driver={ODBC Driver 13 for SQL Server};Server=" + db_server + ";Database=" + db + ";Uid=" + db_id + ";Pwd=" + db_pwd + ";Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;")
     cursor = connection.cursor()
 
-    if I not in ["READ UNCOMMITTED", "READ COMMITTED", "REPEATABLE READ", "SNAPSHOT", "SERIALIZABLE"]:
+    if I.upper() not in ["READ UNCOMMITTED", "READ COMMITTED", "REPEATABLE READ", "SNAPSHOT", "SERIALIZABLE"]:
         connection.close()
         raise ValueError("Connection closed. Isolation level not one of READ UNCOMMITTED, READ COMMITTED, REPEATABLE READ, SNAPSHOT, SERIALIZABLE")
 
     isolation_str = "SET TRANSACTION ISOLATION LEVEL " + I
-    print(isolation_str)
-
     cursor.execute(isolation_str)
     cursor.commit()
 
@@ -40,10 +38,9 @@ def sum_isolation(S, I):
         res.append(total)
 
     connection.close()
-
-    print(res)
     return res
         
 if __name__ == '__main__':
     print(sys.argv)
-    sum_isolation(int(sys.argv[1]), sys.argv[2])
+    result = sum_isolation(int(sys.argv[1]), sys.argv[2])
+    print(result)

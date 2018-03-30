@@ -57,16 +57,17 @@ def run_exchanges(num_exchange, num_thread, isolation_level):
   results = pool.map(thread_exchange, param)
   return results
 
-prompt = "> "
-print("number of exchanges in each thread: ")
-num_exchange = int(raw_input(prompt))
-print("number of threads: ")
-num_thread = int(raw_input(prompt))
-print("isolation level: ('read committed', 'repeatable read', 'serializable'): ")
-isolation_level = raw_input(prompt)
-if isolation_level.upper() not in ["READ COMMITTED", "REPEATABLE READ", "SERIALIZABLE"]:
-   raise ValueError("Connection closed: invalid isolation level")
+if __name__ == '__main__':
+  prompt = ">>>>>>>>> "
+  print("number of exchanges in each thread: ")
+  num_exchange = int(raw_input(prompt))
+  print("number of threads: ")
+  num_thread = int(raw_input(prompt))
+  print("isolation level: ('read committed', 'repeatable read', 'serializable'): ")
+  isolation_level = raw_input(prompt)
+  if isolation_level.upper() not in ["READ COMMITTED", "REPEATABLE READ", "SERIALIZABLE"]:
+     raise ValueError("Connection closed: invalid isolation level")
 
-result = run_exchanges(num_exchange, num_thread, isolation_level)
-print(result)
+  result = run_exchanges(num_exchange, num_thread, isolation_level)
+  print(result)
 
