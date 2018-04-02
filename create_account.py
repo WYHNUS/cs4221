@@ -25,7 +25,7 @@ import random
 for i in range(1,100001):
     branch_num = random.randint(1,20)
     balance = round(random.random()*100000, 2)
-    insertion_str = "INSERT INTO account VALUES(" + str(i) + "," + str(branch_num) + "," + str(random.random()*100000) + ");"
+    insertion_str = "INSERT INTO account VALUES(" + str(i) + "," + str(branch_num) + "," + str(balance) + ");"
     cursor.execute(insertion_str)
     cursor.commit()
 
