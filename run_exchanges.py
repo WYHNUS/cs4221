@@ -1,6 +1,6 @@
 import pyodbc
 import random
-from multiprocessing import Pool
+from multiprocessing.dummy import Pool
 from sys import argv
 import time
 
