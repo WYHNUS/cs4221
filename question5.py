@@ -9,25 +9,33 @@ from functools import wraps
 def timed(f):
   @wraps(f)
   def wrapper(*args, **kwds):
-    start = time.clock()
+    start = float(time.time())
     result = f(*args, **kwds)
-    elapsed = time.clock() - start
-    print "%s took %d time to finish" % (f.__name__, elapsed)
+    elapsed = float(time.time()) - float(start)
+    print "%s took %f time to finish" % (f.__name__, elapsed)
     return result
   return wrapper
 
 
 def test(S,E,T,I):
+    print("S: %i, E: %i, T: %i, I: %s" % (S, E, T, I))
     wrapped_sum_isolation = timed(sum_isolation)
     wrapped_run_exchanges = timed(run_exchanges)
     t1 = threading.Thread(target=wrapped_sum_isolation, args=(S,I))
     t2 = threading.Thread(target=wrapped_run_exchanges, args=(E, T, I))
-    before_threads = time.clock()
     t2.start()
     t1.start()
-    print(time.clock() - before_threads)
+    t2.join()
+    t1.join()
 
 if __name__ == '__main__':
     print(sys.argv)
     #Expect S, E, T, I
-    test(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]), sys.argv[4])
+    # test(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]), sys.argv[4])
+    exchanges_tot = 2500
+    sum_tot = 500
+    test(sum_tot, exchanges_tot/1, 1, sys.argv[1])
+    test(sum_tot, exchanges_tot/5, 5, sys.argv[1])
+    test(sum_tot, exchanges_tot/10, 10, sys.argv[1])
+    test(sum_tot, exchanges_tot/25, 25, sys.argv[1])
+    test(sum_tot, exchanges_tot/50, 50, sys.argv[1])
