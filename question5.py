@@ -16,12 +16,11 @@ def timed(f):
     return result
   return wrapper
 
-
 def test(S,E,T,I):
     print("S: %i, E: %i, T: %i, I: %s" % (S, E, T, I))
     wrapped_sum_isolation = timed(sum_isolation)
     wrapped_run_exchanges = timed(run_exchanges)
-    t1 = threading.Thread(target=wrapped_sum_isolation, args=(S,I))
+    t1 = threading.Thread(target=wrapped_sum_isolation, args=(S, I))
     t2 = threading.Thread(target=wrapped_run_exchanges, args=(E, T, I))
     t2.start()
     t1.start()

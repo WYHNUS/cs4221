@@ -1,7 +1,7 @@
 import pyodbc
 import sys
 from sys import argv
-from multiprocessing.pool import ThreadPool
+import threading
 
 from run_sums import sum_isolation
 from run_exchanges import run_exchanges
@@ -17,6 +17,12 @@ db_server = os.getenv("db_server")
 db = os.getenv("db")
 db_id = os.getenv("db_id")
 db_pwd = os.getenv("db_pwd")
+
+def sum_thread(num_sum, isolation_level, result):
+  result[0] = sum_isolation(num_sum, isolation_level)
+
+def exchange_thread(num_exchange, num_thread, isolation_level, result):
+  result[0] = run_exchanges(num_exchange, num_thread, isolation_level)
 
 if __name__ == '__main__':
   prompt = "> "
@@ -37,11 +43,18 @@ if __name__ == '__main__':
   true_sum = cursor.fetchall()[0][0] 
 
   sums = sum_isolation(num_sum, isolation_level)
-  try:
-    pool = ThreadPool(1)
-    # following line is buggy -> might need to fix with threading.Thread
-    results = pool.map([sum_isolation, run_exchanges], [[num_sum, isolation_level], [num_exchange, num_thread, isolation_level]])
-    print(results)
-  except:
-    print sys.exc_info()[0]
+  result_sum = [None]
+  result_exchange = [None]  
+  t1 = threading.Thread(target=sum_thread, args=(num_sum, isolation_level, result_sum))
+  t2 = threading.Thread(target=exchange_thread, args=(num_exchange, num_thread, isolation_level, result_exchange))
+  t1.start()
+  t2.start()
+  t1.join()
+  t2.join()
 
+  correct_count = 0
+  for val in result_sum[0]:
+    if abs(val - true_sum) < 0.01:
+      correct_count += 1
+  accuracy = correct_count / float(num_sum) 
+  print("correctness: " + str(accuracy))
